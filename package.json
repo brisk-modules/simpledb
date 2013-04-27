@@ -1,0 +1,37 @@
+{
+  "name": "brisk-simpledb",
+  "version": "0.0.1",
+  "description": "SimpleDB extension for Brisk",
+  "author": "makesites",
+  "contributors": [
+    {
+      "name": "Makis Tracend",
+      "email": "makis@makesit.es"
+    }
+  ],
+  "homepage": "http://makesites.org/brisk",
+  "keywords": [
+    "node", "express", "framework", "brisk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brisk-modules/simpledb"
+  },
+  "bugs": {
+    "url": "https://github.com/brisk-modules/simpledb/issues"
+  }, 
+  "licenses": [
+    {
+      "type": "MIT License",
+      "url": "http://makesites.org/licenses/MIT"
+    }
+  ], 
+  "main": "./index.js",
+  "engines": {
+    "node": ">0.8.x"
+  },
+  "dependencies": {
+	"brisk": "x", 
+	"node-uuid": "1.x"
+  }
+}
