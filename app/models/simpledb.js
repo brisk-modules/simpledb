@@ -58,8 +58,8 @@ var model = Model.extend({
     delete: function( data, callback ) {
         // fallback for no callback
 		var next = callback || function(){};
-		// exit now if deleting is not allowed
-        if( !this.options.delete ) return next();
+		// if deleting is not allowed forward to trashing
+        if( !this.options.delete ) return this.trash( data, {}, next );
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) next( false );
 		
