@@ -3,6 +3,9 @@ var brisk = require("brisk"),
     Model = brisk.getBaseModel("model");
 
 var model = Model.extend({
+    options: {
+        delete : true
+    }, 
 	init: function( site ){ 
 		// db
 		this.db = site.modules.db;
@@ -12,7 +15,10 @@ var model = Model.extend({
         // 
 	}, 
     create: function( data, callback ) {
-		
+		// if not 'real' deleting add the trash flag
+        if( !this.options.delete ){ 
+		  data.trash = 0;
+        }
 		var attributes = this.attributes( data );
 		
 		this.db.call("PutAttributes", attributes, callback);
@@ -27,7 +33,7 @@ var model = Model.extend({
 			query += " where "+ this.query( data, options );
 		}
 		
-		this.db.call("Select", { SelectExpression: query }, function(err, result) {
+        this.db.call("Select", { SelectExpression: query }, function(err, result) {
 			if (err) return callback(err);
 			var response = self.parse( result["SelectResult"] );
 			// convert to an array if returning a single object (for no id)
@@ -194,12 +200,19 @@ var model = Model.extend({
 	},
 	// mongoDB compatibility
 	find : function( data, callback, options ) {
-		// find only looks into the entries that are not trashed
-		data.trash = 0;
+		// if not 'real' deleting add the trash flag
+        // find only looks into the entries that are not trashed...
+        if( !this.options.delete ){ 
+		  data.trash = 0;
+        }
 		this.read( data, callback, options);
     }, 
 	findOne : function( data, callback ) {
-		data.trash = 0;
+        // if not 'real' deleting add the trash flag
+        // find only looks into the entries that are not trashed...
+        if( !this.options.delete ){ 
+		  data.trash = 0;
+        }
 		this.read( data, callback, { limit : 1 });
 		
     },
