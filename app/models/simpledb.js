@@ -172,6 +172,9 @@ var model = Model.extend({
 				}
 				// ovewrite any model id present with the Attribute Name
 				model.id  = data["Item"][i]["Name"];
+                // filter model
+                model = this.filter( model );
+                //
 				collection.push(model);
 				
 			}
@@ -192,13 +195,25 @@ var model = Model.extend({
 			
 			// ovewrite any model id present with the Attribute Name
 			model.id  = data["Item"]["Name"];
-			
+			// filter model
+            model = this.filter( model );
 		}
 		
 		// check if we have a model or collection returned 
 		return collection || model;
 		
 	},
+    
+    // remove certain (internal) keys when reading
+    filter : function( data ){
+        // remove the trash flag
+        try{
+            delete data.trash;
+        } catch( e ){};
+        //...
+        return data;
+    }, 
+    
 	// mongoDB compatibility
 	find : function( data, callback, options ) {
 		// if not 'real' deleting add the trash flag
