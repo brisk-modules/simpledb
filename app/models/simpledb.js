@@ -3,10 +3,12 @@ var brisk = require("brisk"),
     Model = brisk.getBaseModel("model");
 
 var model = Model.extend({
+    
     options: {
         delete : true, 
         delKey : "_archive"
     }, 
+    
 	init: function( site ){ 
 		// db
 		this.db = site.modules.db;
@@ -15,6 +17,7 @@ var model = Model.extend({
 		this.schema = {};
         // 
 	}, 
+    
     create: function( data, callback ) {
 		// if not 'real' deleting add the 'archive' flag
         if( !this.options.delete ){ 
@@ -25,6 +28,7 @@ var model = Model.extend({
 		this.db.call("PutAttributes", attributes, callback);
 
     }, 
+    
     read: function( data, callback, options ) {
 		// fallbacks
 		options || ( options ={} );
@@ -45,6 +49,7 @@ var model = Model.extend({
 		});
 		
     }, 
+    
     update: function( data, callback ) {
 		// fallback for no callback
 		var next = callback || function(){};
@@ -56,11 +61,12 @@ var model = Model.extend({
 		this.db.call("PutAttributes", attributes, next);
 		
     }, 
+    
     delete: function( data, callback ) {
         // fallback for no callback
 		var next = callback || function(){};
 		// if deleting is not allowed forward to archiving
-        if( !this.options.delete ) return this.trash( data, {}, next );
+        if( !this.options.delete ) return this.archive( data, {}, next );
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) next( false );
 		
@@ -223,6 +229,7 @@ var model = Model.extend({
         }
 		this.read( data, callback, options);
     }, 
+    
 	findOne : function( data, callback ) {
         // only look into the entries that are not archived...
         if( !this.options.delete ){ 
@@ -230,14 +237,16 @@ var model = Model.extend({
         }
 		this.read( data, callback, { limit : 1 });
 		
-    },
+    }, 
+    
 	all : function( callback ) {
 		
 		this.read( false, callback );
 		
-    } , 
+    }, 
+    
 	// sets an archive flag for "deleted" items
-	trash: function( data, options, callback ) {
+	archive: function( data, options, callback ) {
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) callback( false );
 		// fallbacks
