@@ -4,7 +4,8 @@ var brisk = require("brisk"),
 
 var model = Model.extend({
     options: {
-        delete : true
+        delete : true, 
+        delKey : "_archive"
     }, 
 	init: function( site ){ 
 		// db
@@ -15,9 +16,9 @@ var model = Model.extend({
         // 
 	}, 
     create: function( data, callback ) {
-		// if not 'real' deleting add the trash flag
+		// if not 'real' deleting add the 'archive' flag
         if( !this.options.delete ){ 
-		  data.trash = 0;
+		  data[this.options.delKey] = 0;
         }
 		var attributes = this.attributes( data );
 		
@@ -58,7 +59,7 @@ var model = Model.extend({
     delete: function( data, callback ) {
         // fallback for no callback
 		var next = callback || function(){};
-		// if deleting is not allowed forward to trashing
+		// if deleting is not allowed forward to archiving
         if( !this.options.delete ) return this.trash( data, {}, next );
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) next( false );
@@ -206,9 +207,9 @@ var model = Model.extend({
     
     // remove certain (internal) keys when reading
     filter : function( data ){
-        // remove the trash flag
+        // remove the archive flag
         try{
-            delete data.trash;
+            delete data[this.options.delKey];
         } catch( e ){};
         //...
         return data;
@@ -216,18 +217,16 @@ var model = Model.extend({
     
 	// mongoDB compatibility
 	find : function( data, callback, options ) {
-		// if not 'real' deleting add the trash flag
-        // find only looks into the entries that are not trashed...
+		// only look into the entries that are not archived...
         if( !this.options.delete ){ 
-		  data.trash = 0;
+		  data[this.options.delKey] = 0;
         }
 		this.read( data, callback, options);
     }, 
 	findOne : function( data, callback ) {
-        // if not 'real' deleting add the trash flag
-        // find only looks into the entries that are not trashed...
+        // only look into the entries that are not archived...
         if( !this.options.delete ){ 
-		  data.trash = 0;
+		  data[this.options.delKey] = 0;
         }
 		this.read( data, callback, { limit : 1 });
 		
@@ -237,7 +236,7 @@ var model = Model.extend({
 		this.read( false, callback );
 		
     } , 
-	// sets a trash =1 flag for "deleted" items
+	// sets an archive flag for "deleted" items
 	trash: function( data, options, callback ) {
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) callback( false );
@@ -255,7 +254,7 @@ var model = Model.extend({
 			}
 		}
 		// set the data 
-		data.trash = 1;
+		data[this.options.delKey] = 1;
 			
 		var attributes = this.attributes( data, { replace : true });
 		
