@@ -1,13 +1,13 @@
 var brisk = require("brisk"),
-    uuid = require("node-uuid"),
-    Model = brisk.getBaseModel("model");
+	uuid = require("node-uuid"),
+	Model = brisk.getBaseModel("model");
 
 var model = Model.extend({
 
-    options: {
-        delete : true,
-        delKey : "_archive"
-    },
+	options: {
+		delete : true,
+		delKey : "_archive"
+	},
 
 	init: function( site ){
 		// db
@@ -15,21 +15,21 @@ var model = Model.extend({
 		this.backend = false;
 		// schema
 		this.schema = {};
-        //
+		//
 	},
 
-    create: function( data, callback ) {
+	create: function( data, callback ) {
 		// if not 'real' deleting add the 'archive' flag
-        if( !this.options.delete ){
+		if( !this.options.delete ){
 		  data[this.options.delKey] = 0;
-        }
+		}
 		var attributes = this.attributes( data );
 
 		this.db.call("PutAttributes", attributes, callback);
 
-    },
+	},
 
-    read: function( data, callback, options ) {
+	read: function( data, callback, options ) {
 		// fallbacks
 		options || ( options ={} );
 		var self = this;
@@ -38,7 +38,7 @@ var model = Model.extend({
 			query += " where "+ this.query( data, options );
 		}
 
-        this.db.call("Select", { SelectExpression: query }, function(err, result) {
+		this.db.call("Select", { SelectExpression: query }, function(err, result) {
 			if (err) return callback(err);
 			var response = self.parse( result["SelectResult"] );
 			// convert to an array if returning a single object (for no id)
@@ -48,9 +48,9 @@ var model = Model.extend({
 			callback(  response );
 		});
 
-    },
+	},
 
-    update: function( data, callback ) {
+	update: function( data, callback ) {
 		// fallback for no callback
 		var next = callback || function(){};
 		// don't execute with no specified id...
@@ -60,13 +60,13 @@ var model = Model.extend({
 
 		this.db.call("PutAttributes", attributes, next);
 
-    },
+	},
 
-    delete: function( data, callback ) {
-        // fallback for no callback
+	"delete": function( data, callback ) {
+		// fallback for no callback
 		var next = callback || function(){};
 		// if deleting is not allowed forward to archiving
-        if( !this.options.delete ) return this.archive( data, {}, next );
+		if( !this.options.delete ) return this.archive( data, {}, next );
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) next( false );
 
@@ -74,9 +74,9 @@ var model = Model.extend({
 
 		this.db.call("DeleteAttributes", attributes, next);
 
-    },
+	},
 
-	attributes : function(model, options){
+	attributes: function(model, options){
 		//default options
 		options || (options = {});
 		options.replace || (options.replace = false);
@@ -106,7 +106,7 @@ var model = Model.extend({
 		return query;
 	},
 
-	query : function( data, options ){
+	query: function( data, options ){
 		// fallbacks
 		options || ( options ={} );
 		var str = "";
@@ -147,7 +147,7 @@ var model = Model.extend({
 
 	},
 
-	parse : function( data ) {
+	parse: function( data ) {
 
 		// return empty if there are no results
 		if( typeof(data["Item"]) == "undefined"){
@@ -179,9 +179,9 @@ var model = Model.extend({
 				}
 				// ovewrite any model id present with the Attribute Name
 				model.id  = data["Item"][i]["Name"];
-                // filter model
-                model = this.filter( model );
-                //
+				// filter model
+				model = this.filter( model );
+				//
 				collection.push(model);
 
 			}
@@ -203,7 +203,7 @@ var model = Model.extend({
 			// ovewrite any model id present with the Attribute Name
 			model.id  = data["Item"]["Name"];
 			// filter model
-            model = this.filter( model );
+			model = this.filter( model );
 		}
 
 		// check if we have a model or collection returned
@@ -211,39 +211,39 @@ var model = Model.extend({
 
 	},
 
-    // remove certain (internal) keys when reading
-    filter : function( data ){
-        // remove the archive flag
-        try{
-            delete data[this.options.delKey];
-        } catch( e ){};
-        //...
-        return data;
-    },
+	// remove certain (internal) keys when reading
+	filter: function( data ){
+		// remove the archive flag
+		try{
+			delete data[this.options.delKey];
+		} catch( e ){};
+		//...
+		return data;
+	},
 
 	// mongoDB compatibility
-	find : function( data, callback, options ) {
+	find: function( data, callback, options ) {
 		// only look into the entries that are not archived...
-        if( !this.options.delete ){
+		if( !this.options.delete ){
 		  data[this.options.delKey] = 0;
-        }
+		}
 		this.read( data, callback, options);
-    },
+	},
 
-	findOne : function( data, callback ) {
-        // only look into the entries that are not archived...
-        if( !this.options.delete ){
+	findOne: function( data, callback ) {
+		// only look into the entries that are not archived...
+		if( !this.options.delete ){
 		  data[this.options.delKey] = 0;
-        }
+		}
 		this.read( data, callback, { limit : 1 });
 
-    },
+	},
 
-	all : function( callback ) {
+	all: function( callback ) {
 
 		this.read( false, callback );
 
-    },
+	},
 
 	// sets an archive flag for "deleted" items
 	archive: function( data, options, callback ) {
@@ -269,7 +269,7 @@ var model = Model.extend({
 
 		this.db.call("PutAttributes", attributes, callback);
 
-    }
+	}
 
 });
 
