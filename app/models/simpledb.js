@@ -5,8 +5,12 @@ var brisk = require("brisk"),
 var model = Model.extend({
 
 	options: {
-		delete : true,
-		delKey : "_archive"
+		"delete" : true,
+		delKey : "_archive", // combine this with the delete flag?
+		timestamps: {
+			updated: "updated",
+			created: "created"
+		}
 	},
 
 	init: function( site ){
@@ -21,7 +25,11 @@ var model = Model.extend({
 	create: function( data, callback ) {
 		// if not 'real' deleting add the 'archive' flag
 		if( !this.options.delete ){
-		  data[this.options.delKey] = 0;
+			data[this.options.delKey] = 0;
+		}
+		if( this.options.timestamps ){
+			data[this.options.timestamps.created] = now();
+			data[this.options.timestamps.updated] = now();
 		}
 		var attributes = this.attributes( data );
 
@@ -55,7 +63,9 @@ var model = Model.extend({
 		var next = callback || function(){};
 		// don't execute with no specified id...
 		if( typeof( data.id ) == "undefined" ) next( false );
-
+		if( this.options.timestamps ){
+			data[this.options.timestamps.updated] = now();
+		}
 		var attributes = this.attributes( data, { replace : true });
 
 		this.db.call("PutAttributes", attributes, next);
@@ -264,7 +274,9 @@ var model = Model.extend({
 		}
 		// set the data
 		data[this.options.delKey] = 1;
-
+		if( this.options.timestamps ){
+			data[this.options.timestamps.updated] = now();
+		}
 		var attributes = this.attributes( data, { replace : true });
 
 		this.db.call("PutAttributes", attributes, callback);
@@ -272,5 +284,13 @@ var model = Model.extend({
 	}
 
 });
+
+// Helpers
+
+function now(){
+	// make sure this is calculates miliseconds? (13 chars)
+	return (new Date()).getTime();
+}
+
 
 module.exports = model;
