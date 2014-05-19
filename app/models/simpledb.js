@@ -124,6 +124,7 @@ var model = Model.extend({
 		//if(typeof data === "string") return data;
 
 		var first = true;
+
 		for( var key in data ){
 			if( !first ) str += " and ";
 			//
@@ -139,7 +140,7 @@ var model = Model.extend({
 				field = field[0];
 			}
 			// check value
-			if(data[key].$gt) {
+			if(data[key] && data[key].$gt) {
 				exp = "`{{field}}` > '{{value}}'";
 				value = data[key].$gt;
 			}
