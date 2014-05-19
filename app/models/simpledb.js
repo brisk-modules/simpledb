@@ -62,7 +62,7 @@ var model = Model.extend({
 		// fallback for no callback
 		var next = callback || function(){};
 		// don't execute with no specified id...
-		if( typeof( data.id ) == "undefined" ) next( false );
+		if( typeof data.id == "undefined" ) next( false );
 		if( this.options.timestamps ){
 			data[this.options.timestamps.updated] = now();
 		}
@@ -78,7 +78,7 @@ var model = Model.extend({
 		// if deleting is not allowed forward to archiving
 		if( !this.options.delete ) return this.archive( data, {}, next );
 		// don't execute with no specified id...
-		if( typeof( data.id ) == "undefined" ) next( false );
+		if( typeof data.id == "undefined" ) next( false );
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
@@ -96,7 +96,7 @@ var model = Model.extend({
 		var count = 0;
 
 		// create id if not defined
-		if( typeof( model.id ) == "undefined" ) model.id = uuid.v1();
+		if( typeof model.id == "undefined" ) model.id = uuid.v1();
 
 		query.DomainName = this.backend;
 		query.ItemName = model.id;
@@ -108,7 +108,7 @@ var model = Model.extend({
 			//if( key == "id" ) continue;
 			var item = new Array()
 			query["Attribute."+ count +".Name"] = key;
-			query["Attribute."+ count +".Value"] = ( typeof(model[key]) != "object") ? model[key] : JSON.stringify(model[key]);
+			query["Attribute."+ count +".Value"] = ( typeof model[key] != "object") ? model[key] : JSON.stringify(model[key]);
 			if(options.replace) query["Attribute."+ count +".Replace"] = true;
 			count++;
 		}
@@ -144,7 +144,7 @@ var model = Model.extend({
 				exp = "`{{field}}` > '{{value}}'";
 				value = data[key].$gt;
 			}
-			if( typeof(value) == "object") value = JSON.stringify(value);
+			if( typeof value == "object") value = JSON.stringify(value);
 			str += exp.replace("{{field}}", field).replace("{{value}}", value);
 			//
 			first = false;
@@ -161,7 +161,7 @@ var model = Model.extend({
 	parse: function( data ) {
 
 		// return empty if there are no results
-		if( typeof(data["Item"]) == "undefined"){
+		if( typeof data["Item"] == "undefined"){
 			return false;
 		}
 
@@ -259,7 +259,7 @@ var model = Model.extend({
 	// sets an archive flag for "deleted" items
 	archive: function( data, options, callback ) {
 		// don't execute with no specified id...
-		if( typeof( data.id ) == "undefined" ) callback( false );
+		if( typeof data.id == "undefined" ) callback( false );
 		// fallbacks
 		options || (options = {});
 		if( options.$set ){
