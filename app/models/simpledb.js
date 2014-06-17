@@ -139,10 +139,15 @@ var model = Model.extend({
 				var field = key.split(".");
 				field = field[0];
 			}
-			// check value
+			// operators
 			if(data[key] && data[key].$gt) {
 				exp = "`{{field}}` > '{{value}}'";
 				value = data[key].$gt;
+			}
+			// operators
+			if(data[key] && data[key].$lt) {
+				exp = "`{{field}}` < '{{value}}'";
+				value = data[key].$lt;
 			}
 			if( typeof value == "object") value = JSON.stringify(value);
 			str += exp.replace("{{field}}", field).replace("{{value}}", value);
