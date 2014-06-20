@@ -207,13 +207,18 @@ var model = Model.extend({
 			var model = {};
 			var attr = data["Item"]["Attribute"];
 
-			for (var i in attr) {
-				try{
-					model[attr[i]["Name"]] = JSON.parse( attr[i]["Value"] );
-				} catch(err) {
-					// output err.message ?
-					model[attr[i]["Name"]] = attr[i]["Value"];
+			if( attr instanceof Array ){
+				for (var i in attr) {
+					try{
+						model[attr[i]["Name"]] = JSON.parse( attr[i]["Value"] );
+					} catch(err) {
+						// output err.message ?
+						model[attr[i]["Name"]] = attr[i]["Value"];
+					}
 				}
+			} else {
+				// this is only one item
+				model[attr["Name"]] = attr["Value"];
 			}
 
 			// ovewrite any model id present with the Attribute Name
@@ -241,7 +246,7 @@ var model = Model.extend({
 	find: function( data, callback, options ) {
 		// only look into the entries that are not archived...
 		if( !this.options.delete ){
-		  data[this.options.delKey] = 0;
+			data[this.options.delKey] = 0;
 		}
 		this.read( data, callback, options);
 	},
@@ -249,7 +254,7 @@ var model = Model.extend({
 	findOne: function( data, callback ) {
 		// only look into the entries that are not archived...
 		if( !this.options.delete ){
-		  data[this.options.delKey] = 0;
+			data[this.options.delKey] = 0;
 		}
 		this.read( data, callback, { limit : 1 });
 
@@ -259,6 +264,31 @@ var model = Model.extend({
 
 		this.read( false, callback );
 
+	},
+
+	// count the number of items (optionally with conditions)
+	count: function( data, callback, options ) {
+		// fallbacks
+		options = options || {};
+		data = data || {};
+		// variables
+		var self = this;
+		var query = "select count(*) from "+ this.backend;
+		// only look into the entries that are not archived...
+		if( !this.options.delete || !options.archived ){
+			data[this.options.delKey] = 0;
+		}
+		if( data !== {} ){ // better way to condition data is empty?
+			query += " where "+ this.query( data, options );
+		}
+
+		this.db.call("Select", { SelectExpression: query }, function(err, result) {
+			if (err) return callback(err);
+			var response = self.parse( result["SelectResult"] );
+			//
+			var count = response.Count || false;
+			callback(  count  );
+		});
 	},
 
 	// sets an archive flag for "deleted" items
