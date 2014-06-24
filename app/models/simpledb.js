@@ -70,7 +70,7 @@ var model = Model.extend({
 
 		this.db.call("PutAttributes", attributes, function( err, result ){
 			if (err) return next(err);
-			var response = self.parse( result["SelectResult"] );
+			var response = self.parse( result );
 			// error control
 			next( null, response );
 		});
