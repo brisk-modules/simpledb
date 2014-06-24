@@ -68,7 +68,12 @@ var model = Model.extend({
 		}
 		var attributes = this.attributes( data, { replace : true });
 
-		this.db.call("PutAttributes", attributes, next);
+		this.db.call("PutAttributes", attributes, function( err, result ){
+			if (err) return next(err);
+			var response = self.parse( result["SelectResult"] );
+			// error control
+			next( null, response );
+		});
 
 	},
 
