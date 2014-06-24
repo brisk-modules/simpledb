@@ -40,6 +40,7 @@ var model = Model.extend({
 	read: function( data, callback, options ) {
 		// fallbacks
 		options || ( options ={} );
+		callback = callback || function(){};
 		var self = this;
 		var query = "select * from "+ this.backend;
 		if( data ){
@@ -60,40 +61,40 @@ var model = Model.extend({
 
 	update: function( data, callback ) {
 		// fallback for no callback
-		var next = callback || function(){};
+		callback = callback || function(){};
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) next( false );
+		if( typeof data.id == "undefined" ) callback( false );
 		if( this.options.timestamps ){
 			data[this.options.timestamps.updated] = now();
 		}
 		var attributes = this.attributes( data, { replace : true });
 
 		this.db.call("PutAttributes", attributes, function( err, result ){
-			if (err) return next(err);
+			if (err) return callback(err);
 			var response = self.parse( result );
 			// error control
-			next( null, response );
+			callback( null, response );
 		});
 
 	},
 
 	"delete": function( data, callback ) {
 		// fallback for no callback
-		var next = callback || function(){};
+		callback = callback || function(){};
 		// if deleting is not allowed forward to archiving
-		if( !this.options.delete ) return this.archive( data, {}, next );
+		if( !this.options.delete ) return this.archive( data, {}, callback );
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) next( false );
+		if( typeof data.id == "undefined" ) callback( false );
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
 		this.db.call("DeleteAttributes", attributes, , function( err, result ){
-			if (err) return next(err);
+			if (err) return callback(err);
 			var response = self.parse( result );
 			// error control
 			//...
 			// return a standard success response
-			next( null, { success: true });
+			callback( null, { success: true });
 		});
 
 	},
