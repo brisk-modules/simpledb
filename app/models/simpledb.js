@@ -87,7 +87,14 @@ var model = Model.extend({
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
-		this.db.call("DeleteAttributes", attributes, next);
+		this.db.call("DeleteAttributes", attributes, , function( err, result ){
+			if (err) return next(err);
+			var response = self.parse( result );
+			// error control
+			//...
+			// return a standard success response
+			next( null, { success: true });
+		});
 
 	},
 
