@@ -39,7 +39,7 @@ var model = Model.extend({
 
 	read: function( data, callback, options ) {
 		// fallbacks
-		options || ( options ={} );
+		options = options || {};
 		callback = callback || function(){};
 		var self = this;
 		var query = "select * from "+ this.backend;
@@ -101,9 +101,9 @@ var model = Model.extend({
 
 	attributes: function(model, options){
 		//default options
-		options || (options = {});
-		options.replace || (options.replace = false);
-		options.noAttr || (options.noAttr = false);
+		options = options || {};
+		options.replace = options.replace || false;
+		options.noAttr = options.noAttr || false;
 
 		var query = {};
 		var count = 0;
@@ -131,7 +131,7 @@ var model = Model.extend({
 
 	query: function( data, options ){
 		// fallbacks
-		options || ( options ={} );
+		options = options || {};
 		var str = "";
 
 		//if(typeof data === "string") return data;
