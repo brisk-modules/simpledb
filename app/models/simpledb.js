@@ -63,7 +63,7 @@ var model = Model.extend({
 		// fallback for no callback
 		callback = callback || function(){};
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback( false );
+		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 		if( this.options.timestamps ){
 			data[this.options.timestamps.updated] = now();
 		}
@@ -84,7 +84,7 @@ var model = Model.extend({
 		// if deleting is not allowed forward to archiving
 		if( !this.options.delete ) return this.archive( data, {}, callback );
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback( false );
+		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
