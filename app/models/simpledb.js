@@ -53,7 +53,7 @@ var model = Model.extend({
 			//if ( response && (typeof data.id == "undefined") && !(response instanceof Array) ){
 			//	response = [response];
 			//}
-			callback(  response );
+			callback( null, response );
 		});
 
 	},
