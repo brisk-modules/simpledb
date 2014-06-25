@@ -308,7 +308,7 @@ var model = Model.extend({
 			var response = self.parse( result["SelectResult"] );
 			//
 			var count = response.Count || false;
-			callback(  count  );
+			callback( null, count );
 		});
 	},
 
