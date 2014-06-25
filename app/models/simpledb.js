@@ -84,13 +84,13 @@ var model = Model.extend({
 		callback = callback || function(){};
 		// if deleting is not allowed forward to archiving
 		var del = options.delete || this.options.delete;
-		if( !del ) return this.archive( data, {}, callback );
+		if( !del ) return this.archive( data, callback );
 		// don't execute with no specified id...
 		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
-		this.db.call("DeleteAttributes", attributes, , function( err, result ){
+		this.db.call("DeleteAttributes", attributes, function( err, result ){
 			if (err) return callback(err);
 			var response = self.parse( result );
 			// error control
@@ -313,11 +313,13 @@ var model = Model.extend({
 	},
 
 	// sets an archive flag for "deleted" items
-	archive: function( data, options, callback ) {
-		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback( false );
+	archive: function( data, callback, options ) {
 		// fallbacks
-		options || (options = {});
+		options = options || {};
+		callback = callback || function(){};
+		// don't execute with no specified id...
+		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
+		//
 		if( options.$set ){
 			// loop through the $set
 			var set = options.$set;
@@ -336,7 +338,14 @@ var model = Model.extend({
 		}
 		var attributes = this.attributes( data, { replace : true });
 
-		this.db.call("PutAttributes", attributes, callback);
+		this.db.call("PutAttributes", attributes, function( err, result ){
+			if (err) return callback(err);
+			var response = self.parse( result );
+			// error control
+			//...
+			// return a standard success response
+			callback( null, { success: true });
+		});
 
 	}
 
