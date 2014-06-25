@@ -78,11 +78,13 @@ var model = Model.extend({
 
 	},
 
-	"delete": function( data, callback ) {
-		// fallback for no callback
+	"delete": function( data, callback, options ) {
+		// fallbacks
+		options = options || {};
 		callback = callback || function(){};
 		// if deleting is not allowed forward to archiving
-		if( !this.options.delete ) return this.archive( data, {}, callback );
+		var del = options.delete || this.options.delete;
+		if( !del ) return this.archive( data, {}, callback );
 		// don't execute with no specified id...
 		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 
@@ -277,6 +279,12 @@ var model = Model.extend({
 
 		this.read( false, callback );
 
+	},
+
+	// delete objects regardless of "soft" delete option...
+	destroy: function( data, callback ){
+
+		this.delete( data, callback, { delete : true });
 	},
 
 	// count the number of items (optionally with conditions)
