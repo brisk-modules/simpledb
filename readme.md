@@ -10,6 +10,27 @@ Using npm:
 npm install brisk-simpledb
 ```
 
+## Usage
+
+After the model is initialized (automatically done by Brisk) you can use any of the available methods (listed below).
+
+```
+db.read({ key: "value" }, function(err, data){
+	if(err) return console.log(err);
+	console.log("data", data);
+});
+```
+
+
+## Options
+
+These options can be set on the model to customize the DB
+
+* ***delete***: boolean (default: true) Defines if the delete method deletes or archives items (soft delete)
+* ***delKey***: string (default: "_archive"), sets the key used to define if an item is archived (on a soft delete state)
+* ***timestamps.updated: string (default: "updated"): Sets a field to record a timestamp every time the ```update``` method is pinged
+* ***timestamps.created: string (default: "created"): Sets a field to record a timestamp when an item is created.
+
 
 ## Methods
 
@@ -20,23 +41,12 @@ The default model is extended with the following CRUD methods
 * read( query, callback )
 * delete( query, callback )
 
-It also has an API similar to Mongoose for MongoDB, by extending the model with the following:
+In addition, there's a compatibility layer to [Mongoose](http://mongoosejs.com/) for MongoDB, featuring the following methods:
 
 * find( query, callback )
 * findOne( query, callback )
 * findAll()
-
-
-## Usage
-
-Afte the model is initialized (automatically done by Brisk) you can use any of the above methods, for example:
-
-```
-db.read({ key: "value" }, function(err, data){
-	if(err) return console.log(err);
-	console.log("data", data);
-});
-```
+* destroy() - Deletes items even if _soft delete_ is activated.
 
 
 ## Credits
