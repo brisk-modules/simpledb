@@ -23,6 +23,8 @@ var model = Model.extend({
 	},
 
 	create: function( data, callback ) {
+		// fallbacks
+		callback = callback || function(){};
 		// if not 'real' deleting add the 'archive' flag
 		if( !this.options.delete ){
 			data[this.options.delKey] = 0;
@@ -33,8 +35,12 @@ var model = Model.extend({
 		}
 		var attributes = this.attributes( data );
 
-		this.db.call("PutAttributes", attributes, callback);
-
+		this.db.call("PutAttributes", attributes, function( err, result ){
+			if (err) return callback(err);
+			var response = self.parse( result );
+			// error control
+			callback( null, response );
+		});
 	},
 
 	read: function( data, callback, options ) {
