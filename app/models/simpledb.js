@@ -41,6 +41,7 @@ var model = Model.extend({
 		// fallbacks
 		options = options || {};
 		callback = callback || function(){};
+		// variables
 		var self = this;
 		var query = "select * from "+ this.backend;
 		if( data ){
@@ -62,6 +63,8 @@ var model = Model.extend({
 	update: function( data, callback ) {
 		// fallback for no callback
 		callback = callback || function(){};
+		// variables
+		var self = this;
 		// don't execute with no specified id...
 		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 		if( this.options.timestamps ){
@@ -82,6 +85,8 @@ var model = Model.extend({
 		// fallbacks
 		options = options || {};
 		callback = callback || function(){};
+		// variables
+		var self = this;
 		// if deleting is not allowed forward to archiving
 		var del = options.delete || this.options.delete;
 		if( !del ) return this.archive( data, callback );
@@ -317,6 +322,8 @@ var model = Model.extend({
 		// fallbacks
 		options = options || {};
 		callback = callback || function(){};
+		// variables
+		var self = this;
 		// don't execute with no specified id...
 		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 		//
