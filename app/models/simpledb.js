@@ -326,7 +326,7 @@ var model = Model.extend({
 	// sets an archive flag for "deleted" items
 	archive: function( data, callback, options ) {
 		// fallbacks
-		options = options || {};
+		options = options || {}; // , ex... { $set: { updated : "timestamp" } }
 		callback = callback || function(){};
 		// variables
 		var self = this;
