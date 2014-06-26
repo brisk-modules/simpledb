@@ -25,6 +25,8 @@ var model = Model.extend({
 	create: function( data, callback ) {
 		// fallbacks
 		callback = callback || function(){};
+		// variables
+		var self = this;
 		// if not 'real' deleting add the 'archive' flag
 		if( !this.options.delete ){
 			data[this.options.delKey] = 0;
