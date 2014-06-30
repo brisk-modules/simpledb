@@ -5,7 +5,7 @@ var brisk = require("brisk"),
 var model = Model.extend({
 
 	options: {
-		"delete" : true,
+		archive : false,
 		delKey : "_archive", // combine this with the delete flag?
 		timestamps: {
 			updated: "updated",
@@ -28,7 +28,7 @@ var model = Model.extend({
 		// variables
 		var self = this;
 		// if not 'real' deleting add the 'archive' flag
-		if( !this.options.delete ){
+		if( this.options.archive ){
 			data[this.options.delKey] = 0;
 		}
 		if( this.options.timestamps ){
@@ -96,8 +96,8 @@ var model = Model.extend({
 		// variables
 		var self = this;
 		// if deleting is not allowed forward to archiving
-		var del = options.delete || this.options.delete;
-		if( !del ) return this.archive( data, callback );
+		var archive = options.archive || this.options.archive;
+		if( archive ) return this.archive( data, callback );
 		// don't execute with no specified id...
 		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
 
@@ -273,7 +273,7 @@ var model = Model.extend({
 	// mongoDB compatibility
 	find: function( data, callback, options ) {
 		// only look into the entries that are not archived...
-		if( !this.options.delete ){
+		if( this.options.archive ){
 			data[this.options.delKey] = 0;
 		}
 		this.read( data, callback, options);
@@ -281,7 +281,7 @@ var model = Model.extend({
 
 	findOne: function( data, callback ) {
 		// only look into the entries that are not archived...
-		if( !this.options.delete ){
+		if( this.options.archive ){
 			data[this.options.delKey] = 0;
 		}
 		this.read( data, callback, { limit : 1 });
@@ -308,11 +308,12 @@ var model = Model.extend({
 		// variables
 		var self = this;
 		var query = "select count(*) from "+ this.backend;
+		var archive = options.archive || this.options.archive || false;
 		// only look into the entries that are not archived...
-		if( !this.options.delete || !options.archived ){
+		if( archive ){
 			data[this.options.delKey] = 0;
 		}
-		if( data !== {} ){ // better way to condition data is empty?
+		if( data !== {} ){ // better way to condition if data is empty?
 			query += " where "+ this.query( data, options );
 		}
 
@@ -330,6 +331,7 @@ var model = Model.extend({
 		// fallbacks
 		options = options || {}; // , ex... { $set: { updated : "timestamp" } }
 		callback = callback || function(){};
+
 		// variables
 		var self = this;
 		// don't execute with no specified id...
