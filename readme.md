@@ -26,7 +26,7 @@ db.read({ key: "value" }, function(err, data){
 
 These options can be set on the model to customize the DB
 
-* **delete**: boolean (default: true) Defines if the delete method deletes or archives items (soft delete)
+* **archive**: boolean (default: false) Defines if the delete method deletes or archives items (aka soft-delete)
 * **delKey**: string (default: "_archive"), sets the key used to define if an item is archived (on a soft delete state)
 * **timestamps.updated**: string (default: "updated"): Sets a field to record a timestamp every time the ```update``` method is pinged
 * **timestamps.created**: string (default: "created"): Sets a field to record a timestamp when an item is created.
