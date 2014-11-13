@@ -15,11 +15,18 @@ var model = Model.extend({
 
 	init: function( site ){
 		// db
-		this.db = site.modules.db;
+		if( site ) this.db = site.modules.db;
 		this.backend = false;
-		// schema
-		this.schema = {};
-		//
+		// return to parent?
+	},
+
+	// schema
+	schema : function(){
+
+		return {
+			// insert your custom model attributes
+		};
+
 	},
 
 	create: function( data, callback ) {
