@@ -162,30 +162,44 @@ var model = Model.extend({
 
 		for( var key in data ){
 			if( !first ) str += " and ";
-			//
-			var exp = "`{{field}}`='{{value}}'";
-			var field = key;
-			var value = data[key];
-			// check the key
-			var like = ( key.search(/\./) > -1 ) ?  true : false ;
-			// if looking into the object...
-			if(like){
-				exp = "`{{field}}` like '%{{value}}%'";
-				var field = key.split(".");
-				field = field[0];
+			var exp = "";
+			// conditions
+			if( key == "$or" || key == "$and" ){
+				var length = data[key].length;
+				for(var num in data[key]){
+					var condition = data[key][num];
+					// loop...
+					exp += "("+ this.query( condition ) +")";
+					if( num < length-1 ) exp += ( key == "$or" ) ? " or " : " and ";
+				}
+				str += "("+ exp +")";
+			} else {
+				exp = "`{{field}}`='{{value}}'";
+				//
+				var field = key;
+				var value = data[key];
+				// check the key
+				var like = ( key.search(/\./) > -1 ) ?  true : false ;
+				// if looking into the object...
+				if(like){
+					exp = "`{{field}}` like '%{{value}}%'";
+					var field = key.split(".");
+					field = field[0];
+				}
+				// operators
+				if(data[key] && data[key].$gt){
+					exp = "`{{field}}` > '{{value}}'";
+					value = data[key].$gt;
+				}
+				if(data[key] && data[key].$lt){
+					exp = "`{{field}}` < '{{value}}'";
+					value = data[key].$lt;
+				}
+
+				if( typeof value == "object") value = JSON.stringify(value);
+				str += exp.replace("{{field}}", field).replace("{{value}}", value);
 			}
-			// operators
-			if(data[key] && data[key].$gt) {
-				exp = "`{{field}}` > '{{value}}'";
-				value = data[key].$gt;
-			}
-			// operators
-			if(data[key] && data[key].$lt) {
-				exp = "`{{field}}` < '{{value}}'";
-				value = data[key].$lt;
-			}
-			if( typeof value == "object") value = JSON.stringify(value);
-			str += exp.replace("{{field}}", field).replace("{{value}}", value);
+
 			//
 			first = false;
 		}
