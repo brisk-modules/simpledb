@@ -31,7 +31,7 @@
 		"node": ">0.8.x"
 	},
 	"dependencies": {
-	"brisk": "x",
-	"node-uuid": "1.x"
+		"brisk": ">=0.8.7",
+		"node-uuid": "1.x"
 	}
 }
