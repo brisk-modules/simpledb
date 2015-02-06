@@ -81,7 +81,7 @@ var model = Model.extend({
 		// variables
 		var self = this;
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
+		if( typeof data.id == "undefined" ) return callback({ error: "No object id specified" });
 		if( this.options.timestamps ){
 			data[this.options.timestamps.updated] = now();
 		}
@@ -106,7 +106,7 @@ var model = Model.extend({
 		var archive = options.archive || this.options.archive;
 		if( archive ) return this.archive( data, callback );
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
+		if( typeof data.id == "undefined" ) return callback({ error: "No object id specified" });
 
 		var attributes = this.attributes( data, { noAttr: true } );
 
@@ -356,7 +356,7 @@ var model = Model.extend({
 		// variables
 		var self = this;
 		// don't execute with no specified id...
-		if( typeof data.id == "undefined" ) callback({ error: "No object id specified" });
+		if( typeof data.id == "undefined" ) return callback({ error: "No object id specified" });
 		//
 		if( options.$set ){
 			// loop through the $set
