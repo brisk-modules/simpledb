@@ -14,10 +14,11 @@ var model = Model.extend({
 	},
 
 	init: function( site ){
-		// db
-		if( site ) this.db = site.modules.db;
-		this.backend = false;
-		// return to parent?
+		// get db
+		if( site && !this.db ) this.db = site.modules.db || null;
+		this.backend = this.backend || this.options.backend || false;
+		// continue with parent (if available)
+		if( Model.prototype.init ) return Model.prototype.init.call(this, site );
 	},
 
 	// schema
