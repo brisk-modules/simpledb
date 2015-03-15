@@ -1,4 +1,5 @@
-var brisk = require("brisk"),
+var _ = require("underscore"),
+	brisk = require("brisk"),
 	uuid = require("node-uuid"),
 	Model = brisk.getBaseModel("model");
 
@@ -335,7 +336,7 @@ var model = Model.extend({
 		if( archive ){
 			data[this.options.delKey] = 0;
 		}
-		if( data !== {} ){ // better way to condition if data is empty?
+		if( !_.isEmpty( data) ){
 			query += " where "+ this.query( data, options );
 		}
 
