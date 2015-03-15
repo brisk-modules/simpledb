@@ -1,6 +1,6 @@
 {
 	"name": "brisk-simpledb",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"description": "SimpleDB extension for Brisk",
 	"author": "makesites",
 	"contributors": [
